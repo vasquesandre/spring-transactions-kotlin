@@ -1,6 +1,7 @@
 package br.andre.springtransactionskotlin.service
 
 import br.andre.springtransactionskotlin.domain.entity.Transaction
+import br.andre.springtransactionskotlin.domain.repository.TransactionRepository
 import br.andre.springtransactionskotlin.dto.TransactionRequestDTO
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -8,9 +9,9 @@ import java.util.DoubleSummaryStatistics
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-class TransactionService {
-
-    val transactions = ConcurrentHashMap<String, Transaction>()
+class TransactionService(
+    private val transactionRepository: TransactionRepository,
+) {
 
     fun createTransaction(dto: TransactionRequestDTO) {
         val transaction = Transaction(
@@ -18,21 +19,19 @@ class TransactionService {
             dateTime = dto.dateTime
         )
 
-        transactions[transaction.id] = transaction
+        transactionRepository.save(transaction)
     }
 
     fun clearTransactions() {
-        transactions.clear()
+        transactionRepository.deleteAll()
     }
 
     fun getStatistics(seconds: Long): DoubleSummaryStatistics {
         val limit = OffsetDateTime.now().minusSeconds(seconds)
+        val transactions = transactionRepository.findByDateTimeAfter(limit)
 
-        return transactions.values
-            .filter { it.dateTime.isAfter(limit) }
-            .map { it.value }
-            .stream()
-            .mapToDouble { it }
+        return transactions.stream()
+            .mapToDouble { it.value }
             .summaryStatistics()
     }
 

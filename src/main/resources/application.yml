@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: spring-transactions-kotlin
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/transactions-kotlin-db
+    username: admin
+    password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: update
