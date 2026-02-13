@@ -1,6 +1,5 @@
 package br.andre.springtransactionskotlin.dto
 
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.Positive
@@ -11,7 +10,7 @@ data class TransactionRequestDTO(
     @field:Positive
     val value: Double,
 
-    @field:NotBlank
+    @field:NotNull
     @field:PastOrPresent
     val dateTime: OffsetDateTime
 )
